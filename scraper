@@ -1,0 +1,33 @@
+#pip install selenium
+from selenium import webdriver
+
+#from urllib3.util import url
+
+#pip install webdriver-manager
+from webdriver_manager.chrome import ChromeDriverManager
+#pip install beautifulsoup4
+from bs4 import BeautifulSoup
+
+import datetime
+
+def main():
+    #driver = webdriver.Chrome()
+    driver = webdriver.Chrome(ChromeDriverManager().install())
+    #driver.get('https://www.youtube.com/feed/explore'.format(url))
+    driver.get('https://www.youtube.com/feed/explore')
+    content = driver.page_source.encode('utf-8').strip()
+    soup = BeautifulSoup(content, 'lxml')
+    titles = soup.findAll('yt-formatted-string', class_="style-scope ytd-video-renderer")
+    views = soup.findAll('span', class_='style-scope ytd-video-meta-block')
+    video_urls = soup.findAll('a', id='video-title')
+    chanel = soup.findAll('a', class_='yt-simple-endpoint style-scope yt-formatted-string')
+    #print('Channel: {}'.format(url))
+    i = 0 # views and time
+    j = 0 # urls
+    print("Рекомендации\t", datetime.date.today())
+    for title in titles[:50]:
+        print('\n{}\t{}\t{}\t{}\thttps://www.youtube.com{}'.format(chanel.text, title.text, views[i].text, views[i+1].text, video_urls[j].get('href')))
+        i+=2
+        j+=1
+
+main()
