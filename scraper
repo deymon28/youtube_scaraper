@@ -41,7 +41,6 @@ def main2():
     views = soup.findAll('span', class_='style-scope ytd-video-meta-block')
     video_urls = soup.findAll('a', id='video-title')
     chanel = soup.findAll('a', {'class': 'yt-simple-endpoint style-scope yt-formatted-string'})
-    # print('Channel: {}'.format(url))
     i = 0  # views and time
     j = 0  # urls
 
@@ -63,9 +62,7 @@ def main2():
 
 
 def main():
-    # driver = webdriver.Chrome()
     driver = webdriver.Chrome(ChromeDriverManager().install())
-    # driver.get('https://www.youtube.com/feed/explore'.format(url))
     driver.get('https://www.youtube.com/feed/explore')
     content = driver.page_source.encode('utf-8').strip()
     soup = BeautifulSoup(content, 'lxml')
@@ -73,7 +70,6 @@ def main():
     views = soup.findAll('span', class_='style-scope ytd-video-meta-block')
     video_urls = soup.findAll('a', id='video-title')
     chanel = soup.findAll('a', {'class': 'yt-simple-endpoint style-scope yt-formatted-string'})
-    # print('Channel: {}'.format(url))
     i = 0  # views and time
     j = 0  # urls
 
@@ -88,7 +84,6 @@ def main():
         res = str('\nНазвание: {}\tканал: {}\tпросмотры: {}\tпубликация: {}\tссылка: https://www.youtube.com{}'.format(titles[i].text, chanel[i].text, views[i].text, views[i + 1].text, video_urls[j].get('href')))
         data.write(res)
         print(res)
-        # print('\nНазвание: {}\tканал: {}\tпросмотры: {}\tпубликация: {}\tссылка: https://www.youtube.com{}'.format(titles[i].text, chanel[i].text, views[i].text, views[i+1].text, video_urls[j].get('href')))
         i += 2
         j += 1
 
