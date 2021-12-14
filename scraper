@@ -1,18 +1,76 @@
-#pip install selenium
+import time
+# pip install lxml
+# pip install selenium
 from selenium import webdriver
-#pip install webdriver-manager
+# pip install webdriver-manager
 from webdriver_manager.chrome import ChromeDriverManager
-#pip install beautifulsoup4
+# pip install beautifulsoup4
 from bs4 import BeautifulSoup
-
 import datetime
 
+print("виберіть що вам потрібно?")
+print("1.пошук відео")
+print("2.рекомендації")
+
+n = input()
+
+
+def main2():
+    print("що бажаєте шукати?")
+    k = input()
+    print("скільки відео будемо сканувати")
+    # не більше 400
+    l = input()
+
+    if l.isdigit() == False:
+        print("ви ввели не число. попробуйте ще раз")
+        return
+    else:
+        l = int(l)
+
+
+    driver = webdriver.Chrome(ChromeDriverManager().install())
+    driver.get('https://www.youtube.com/results?search_query=' + str(k))
+
+    import time
+    for i in range(0, l) :
+        driver.execute_script("window.scrollTo(0, 1000000)")
+        time.sleep(0.1)
+
+    time.sleep(1)
+
+
+    content = driver.page_source.encode('utf-8').strip()
+    soup = BeautifulSoup(content, 'lxml')
+    titles = soup.findAll('yt-formatted-string', {"class":"style-scope ytd-video-renderer", "aria-lable":""})
+    views = soup.findAll('span', class_='style-scope ytd-video-meta-block')
+    video_urls = soup.findAll('a', id='video-title')
+    chanel = soup.findAll('a', {'class': 'yt-simple-endpoint style-scope yt-formatted-string'})
+    # print('Channel: {}'.format(url))
+    i = 0  # views and time
+    j = 0  # urls
+
+    time = "Пошук\t" + str(datetime.date.today())
+    print(time)
+
+    name = "Пошук " + str(datetime.date.today()) + ".txt"
+    data = open(name, "w", encoding="utf-8")
+    data.write(time)
+
+    for title in titles[:l]:
+        res = str('\nНазвание: {}\tканал: {}\tпросмотры: {}\tпубликация: {}\tссылка: https://www.youtube.com{}'.format(titles[i].text, chanel[i].text, views[i].text, views[i + 1].text, video_urls[j].get('href')))
+        data.write(res)
+        print(res)
+        i += 2
+        j += 1
+
+    data.close()
 
 
 def main():
-    #driver = webdriver.Chrome()
+    # driver = webdriver.Chrome()
     driver = webdriver.Chrome(ChromeDriverManager().install())
-    #driver.get('https://www.youtube.com/feed/explore'.format(url))
+    # driver.get('https://www.youtube.com/feed/explore'.format(url))
     driver.get('https://www.youtube.com/feed/explore')
     content = driver.page_source.encode('utf-8').strip()
     soup = BeautifulSoup(content, 'lxml')
@@ -20,9 +78,9 @@ def main():
     views = soup.findAll('span', class_='style-scope ytd-video-meta-block')
     video_urls = soup.findAll('a', id='video-title')
     chanel = soup.findAll('a', {'class': 'yt-simple-endpoint style-scope yt-formatted-string'})
-    #print('Channel: {}'.format(url))
-    i = 0 # views and time
-    j = 0 # urls
+    # print('Channel: {}'.format(url))
+    i = 0  # views and time
+    j = 0  # urls
 
     time = "Рекомендации\t" + str(datetime.date.today())
     print(time)
@@ -32,14 +90,19 @@ def main():
     data.write(time)
 
     for title in titles[:50]:
-        res = str('\nНазвание: {}\tканал: {}\tпросмотры: {}\tпубликация: {}\tссылка: https://www.youtube.com{}'.format(titles[i].text, chanel[i].text, views[i].text, views[i+1].text, video_urls[j].get('href')))
+        res = str('\nНазвание: {}\tканал: {}\tпросмотры: {}\tпубликация: {}\tссылка: https://www.youtube.com{}'.format(titles[i].text, chanel[i].text, views[i].text, views[i + 1].text, video_urls[j].get('href')))
         data.write(res)
         print(res)
-        #print('\nНазвание: {}\tканал: {}\tпросмотры: {}\tпубликация: {}\tссылка: https://www.youtube.com{}'.format(titles[i].text, chanel[i].text, views[i].text, views[i+1].text, video_urls[j].get('href')))
+        # print('\nНазвание: {}\tканал: {}\tпросмотры: {}\tпубликация: {}\tссылка: https://www.youtube.com{}'.format(titles[i].text, chanel[i].text, views[i].text, views[i+1].text, video_urls[j].get('href')))
         i += 2
         j += 1
 
-
     data.close()
 
-main()
+
+if n == '1':
+    main2()
+elif n == '2':
+    main()
+else:
+    print("напевно ви щось неправильно ввели. попробуйте ще раз.")
